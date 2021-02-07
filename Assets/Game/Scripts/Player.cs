@@ -11,13 +11,15 @@ namespace Game.Scripts
 
         [SerializeField] private GameObject tripleShoot;
 
-        [SerializeField] public bool poweredUp;
+        [SerializeField] private bool tripleShootPoweredUp;
+
+        [SerializeField] private bool speedBoostPoweredUp;
 
         [SerializeField] private float speed = 5.0f;
 
         // FireRate is 0.25f
         [SerializeField] private float fireRate = 0.25f;
-        
+
         private float _nextFire = 0.0f;
 
         // canFire -- has the amount of time between firing passed?
@@ -46,7 +48,7 @@ namespace Game.Scripts
         {
             if (Time.time > _nextFire)
             {
-                if (poweredUp)
+                if (tripleShootPoweredUp)
                 {
                     Instantiate(tripleShoot, transform.position, Quaternion.identity);
                 }
@@ -64,8 +66,10 @@ namespace Game.Scripts
         {
             var horizontalInput = Input.GetAxis("Horizontal");
             var verticalInput = Input.GetAxis("Vertical");
-            transform.Translate(Vector3.right * (speed * horizontalInput * Time.deltaTime));
-            transform.Translate(Vector3.up * (speed * verticalInput * Time.deltaTime));
+            var speedMultiplier = speedBoostPoweredUp ? 5 : 1;
+
+            transform.Translate(Vector3.right * (speed * speedMultiplier * horizontalInput * Time.deltaTime));
+            transform.Translate(Vector3.up * (speed * speedMultiplier * verticalInput * Time.deltaTime));
 
 
             if (transform.position.x > 8.3f)
@@ -95,19 +99,30 @@ namespace Game.Scripts
          */
         public void TripleShootPowerUpOn()
         {
-            poweredUp = true;
+            tripleShootPoweredUp = true;
             StartCoroutine(TripleShootPowerDownRoutine());
         }
-        
-        
-        
+
+
         /**
          * PowerDown routine after five seconds.
          */
         private IEnumerator TripleShootPowerDownRoutine()
         {
             yield return new WaitForSeconds(5.0f);
-            poweredUp = false;
+            tripleShootPoweredUp = false;
+        }
+
+        public void SpeedBoostPowerUpOn()
+        {
+            speedBoostPoweredUp = true;
+            StartCoroutine(SpeedBoostPowerDownRoutine());
+        }
+
+        private IEnumerator SpeedBoostPowerDownRoutine()
+        {
+            yield return new WaitForSeconds(5.0f);
+            speedBoostPoweredUp = false;
         }
     }
 }
