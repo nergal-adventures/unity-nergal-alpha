@@ -1,22 +1,25 @@
 ﻿using System;
+using System.Collections;
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace Game.Scripts
 {
     public class Player : MonoBehaviour
     {
-        [SerializeField]
-        private GameObject laserPrefab;
-        
-        [SerializeField] 
-        private float speed = 5.0f;
-        
-        // FireRate is 0.25f
-        [SerializeField]
-        private float fireRate = 0.25f;
+        [SerializeField] private GameObject laserPrefab;
 
-        private float _nextFire = 0.0f;
+        [SerializeField] private GameObject tripleShoot;
+
+        [SerializeField] public bool poweredUp;
+
+        [SerializeField] private float speed = 5.0f;
+
+        // FireRate is 0.25f
+        [SerializeField] private float fireRate = 0.25f;
         
+        private float _nextFire = 0.0f;
+
         // canFire -- has the amount of time between firing passed?
         // Time.time
 
@@ -43,8 +46,16 @@ namespace Game.Scripts
         {
             if (Time.time > _nextFire)
             {
-                // Spawn Laser
-                Instantiate(laserPrefab, transform.position + new Vector3(0, 0.88f, 0), Quaternion.identity);
+                if (poweredUp)
+                {
+                    Instantiate(tripleShoot, transform.position, Quaternion.identity);
+                }
+                else
+                {
+                    // Spawn Laser
+                    Instantiate(laserPrefab, transform.position + new Vector3(0, 0.88f, 0), Quaternion.identity);
+                }
+
                 _nextFire = Time.time + fireRate;
             }
         }
@@ -76,6 +87,27 @@ namespace Game.Scripts
             {
                 transform.position = new Vector3(transform.position.x, -4.25f, 0);
             }
+        }
+
+
+        /*
+         * Power up On and starts Down coroutine.
+         */
+        public void TripleShootPowerUpOn()
+        {
+            poweredUp = true;
+            StartCoroutine(TripleShootPowerDownRoutine());
+        }
+        
+        
+        
+        /**
+         * PowerDown routine after five seconds.
+         */
+        private IEnumerator TripleShootPowerDownRoutine()
+        {
+            yield return new WaitForSeconds(5.0f);
+            poweredUp = false;
         }
     }
 }
