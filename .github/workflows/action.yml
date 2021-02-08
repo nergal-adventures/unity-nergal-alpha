@@ -21,3 +21,4 @@ jobs:
       - uses: actions/checkout@v2
         with:
           lfs: true
+      - uses: kuler90/build-unity@v1
