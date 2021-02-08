@@ -40,7 +40,7 @@ public class PowerUp : MonoBehaviour
                 }
                 else
                 {
-                    // player.ShieldPowerUpOn();
+                    player.ShieldPowerUpOn();
                 }
             }
 
