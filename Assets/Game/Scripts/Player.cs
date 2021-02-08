@@ -36,7 +36,7 @@ namespace Game.Scripts
         {
             _lifes = 3;
             //Take current position = new position
-            transform.position = new Vector3(0, 0, 0);
+            transform.position = new Vector3(0, 0, 0)
         }
 
         // Update is called once per frame
