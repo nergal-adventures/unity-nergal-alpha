@@ -10,11 +10,5 @@ jobs:
     name: PullRequestAction
     runs-on: ubuntu-latest
     steps:
-      - name: pull-request-action
-        uses: vsoch/pull-request-action@1.0.6
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          BRANCH_PREFIX: "feature/"
-          PULL_REQUEST_BRANCH: "develop"
       - name: Unity - Builder
         uses: game-ci/unity-builder@v2.0-alpha-6
