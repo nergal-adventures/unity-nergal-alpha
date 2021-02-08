@@ -17,8 +17,17 @@ namespace Game.Scripts
             // if position.y > 6 => Destroy the laser
             if (transform.position.y > 6)
             {
-                Destroy(gameObject);
+                OnDestroy();
+                if (transform.parent != null)
+                {
+                    Destroy(transform.parent.gameObject);
+                }
             }
+        }
+
+        public void OnDestroy()
+        {
+            Destroy(this.gameObject);
         }
     }
 }

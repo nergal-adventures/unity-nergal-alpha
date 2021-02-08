@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections;
-using Unity.Mathematics;
+﻿using System.Collections;
 using UnityEngine;
 
 namespace Game.Scripts
@@ -11,16 +9,23 @@ namespace Game.Scripts
 
         [SerializeField] private GameObject tripleShoot;
 
+        [SerializeField] private GameObject explosionAnimation;
+
+        [SerializeField] private GameObject shieldGameObject;
+
         [SerializeField] private bool tripleShootPoweredUp;
 
         [SerializeField] private bool speedBoostPoweredUp;
 
+        [SerializeField] private bool shieldPoweredUp;
+        
         [SerializeField] private float speed = 5.0f;
 
         // FireRate is 0.25f
         [SerializeField] private float fireRate = 0.25f;
 
         private float _nextFire = 0.0f;
+        [SerializeField] private int _lifes;
 
         // canFire -- has the amount of time between firing passed?
         // Time.time
@@ -29,6 +34,7 @@ namespace Game.Scripts
         // Start is called before the first frame update
         void Start()
         {
+            _lifes = 3;
             //Take current position = new position
             transform.position = new Vector3(0, 0, 0);
         }
@@ -112,6 +118,23 @@ namespace Game.Scripts
             yield return new WaitForSeconds(5.0f);
             tripleShootPoweredUp = false;
         }
+        
+        /*
+         * Shiled powerup
+         */
+        public void ShieldPowerUpOn()
+        {
+            shieldPoweredUp = true;
+            shieldGameObject.SetActive(true);
+            StartCoroutine(ShieldPowerDownRoutine());
+        }
+
+        private IEnumerator ShieldPowerDownRoutine()
+        {
+            yield return new WaitForSeconds(10.0f);
+            shieldPoweredUp = false;
+            shieldGameObject.SetActive(false);
+        }
 
         public void SpeedBoostPowerUpOn()
         {
@@ -123,6 +146,25 @@ namespace Game.Scripts
         {
             yield return new WaitForSeconds(5.0f);
             speedBoostPoweredUp = false;
+        }
+
+        public void OnDamageReceived()
+        {
+            if (shieldPoweredUp)
+            {
+                shieldPoweredUp = false;
+                shieldGameObject.SetActive(false);
+            }
+            else
+            {
+                _lifes--;
+            }
+            
+            if (_lifes < 1)
+            {
+                Destroy(this.gameObject);
+                Instantiate(explosionAnimation, transform.position, Quaternion.identity);
+            }
         }
     }
 }
