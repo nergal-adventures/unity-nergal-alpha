@@ -27,6 +27,10 @@ namespace Game.Scripts
         private float _nextFire = 0.0f;
         [SerializeField] private int _lifes;
 
+        private UIManager _uiManager;
+        private GameManager _gameManager;
+        private SpawnManager _spawnManager;
+
         // canFire -- has the amount of time between firing passed?
         // Time.time
 
@@ -37,6 +41,21 @@ namespace Game.Scripts
             _lifes = 3;
             //Take current position = new position
             transform.position = new Vector3(0, 0, 0);
+
+            _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
+
+            if (_uiManager != null)
+            {
+                _uiManager.UpdateLives(_lifes);
+            }
+
+            _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+            _spawnManager = GameObject.Find("SpawnManager").GetComponent < SpawnManager>();
+
+            if (_spawnManager != null)
+            {
+                _spawnManager.StartSpawnRoutines();
+            }
         }
 
         
@@ -159,12 +178,15 @@ namespace Game.Scripts
             else
             {
                 _lifes--;
+                _uiManager.UpdateLives(_lifes);
             }
             
             if (_lifes < 1)
             {
                 Destroy(this.gameObject);
                 Instantiate(explosionAnimation, transform.position, Quaternion.identity);
+                _gameManager.gameOver = true;
+                _uiManager.ShowTitleScreen();
             }
         }
     }
