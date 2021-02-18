@@ -18,7 +18,7 @@ namespace Game.Scripts
         [SerializeField] private bool speedBoostPoweredUp;
 
         [SerializeField] private bool shieldPoweredUp;
-        
+
         [SerializeField] private float speed = 5.0f;
 
         // FireRate is 0.25f
@@ -26,10 +26,14 @@ namespace Game.Scripts
 
         private float _nextFire = 0.0f;
         [SerializeField] private int _lifes;
+        [SerializeField] private GameObject[] _engines;
 
         private UIManager _uiManager;
         private GameManager _gameManager;
         private SpawnManager _spawnManager;
+        private AudioSource _audioSource;
+
+        private int _hitCount = 0;
 
         // canFire -- has the amount of time between firing passed?
         // Time.time
@@ -50,15 +54,18 @@ namespace Game.Scripts
             }
 
             _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
-            _spawnManager = GameObject.Find("SpawnManager").GetComponent < SpawnManager>();
+            _spawnManager = GameObject.Find("SpawnManager").GetComponent<SpawnManager>();
 
             if (_spawnManager != null)
             {
                 _spawnManager.StartSpawnRoutines();
             }
+
+            _audioSource = GetComponent<AudioSource>();
+            _hitCount = 0;
         }
 
-        
+
         // Update is called once per frame
         void Update()
         {
@@ -74,6 +81,7 @@ namespace Game.Scripts
         {
             if (Time.time > _nextFire)
             {
+                _audioSource.Play();
                 if (tripleShootPoweredUp)
                 {
                     Instantiate(tripleShoot, transform.position, Quaternion.identity);
@@ -138,7 +146,7 @@ namespace Game.Scripts
             yield return new WaitForSeconds(5.0f);
             tripleShootPoweredUp = false;
         }
-        
+
         /*
          * Shiled powerup
          */
@@ -177,10 +185,21 @@ namespace Game.Scripts
             }
             else
             {
+                _hitCount++;
+
+                if (_hitCount == 1)
+                {
+                    _engines[0].SetActive(true);
+                }
+                else if (_hitCount == 2)
+                {
+                    _engines[1].SetActive(true);
+                }
+
                 _lifes--;
                 _uiManager.UpdateLives(_lifes);
             }
-            
+
             if (_lifes < 1)
             {
                 Destroy(this.gameObject);

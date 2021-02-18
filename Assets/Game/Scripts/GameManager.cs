@@ -25,7 +25,7 @@ public class GameManager : MonoBehaviour
     {
         if (gameOver == true)
         {
-            if (Input.GetKeyDown(KeyCode.Space))
+            if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0))
             {
                 Instantiate(player, Vector3.zero, quaternion.identity);
                 gameOver = false;
