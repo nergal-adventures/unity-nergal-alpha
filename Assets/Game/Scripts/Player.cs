@@ -34,6 +34,7 @@ namespace Game.Scripts
         private AudioSource _audioSource;
 
         private int _hitCount = 0;
+        private Joystick _joystick;
 
         // canFire -- has the amount of time between firing passed?
         // Time.time
@@ -42,6 +43,9 @@ namespace Game.Scripts
         // Start is called before the first frame update
         void Start()
         {
+            _joystick = FindObjectOfType<Joystick>();
+
+
             _lifes = 3;
             //Take current position = new position
             transform.position = new Vector3(0, 0, 0);
@@ -100,11 +104,20 @@ namespace Game.Scripts
         {
             var horizontalInput = Input.GetAxis("Horizontal");
             var verticalInput = Input.GetAxis("Vertical");
-            var speedMultiplier = speedBoostPoweredUp ? 5 : 1;
 
+            var joystickHorizontal = _joystick.Horizontal;
+            var joystickVertical = _joystick.Vertical;
+
+
+            var speedMultiplier = speedBoostPoweredUp ? 5 : 1;
+            
+#if PLATFORM_ANDROID
+            transform.Translate(Vector3.right * (speed * speedMultiplier * joystickHorizontal * Time.deltaTime));
+            transform.Translate(Vector3.up * (speed * speedMultiplier * joystickVertical * Time.deltaTime));
+#elif UNITY_EDITOR
             transform.Translate(Vector3.right * (speed * speedMultiplier * horizontalInput * Time.deltaTime));
             transform.Translate(Vector3.up * (speed * speedMultiplier * verticalInput * Time.deltaTime));
-
+#endif
 
             if (transform.position.x > 8.3f)
             {
